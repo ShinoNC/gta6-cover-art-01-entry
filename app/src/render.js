@@ -41,12 +41,15 @@ export const LAYOUTS = {
 };
 
 // Grades: duotone ramps [shadow, mid, highlight] + special handling.
+// Each ramp has its own colour identity: warm Sunset/Gold, cold Neon/Ocean,
+// red Halftone, grey Noir — so panels in one cover separate at a glance.
 export const GRADES = {
   none: { label: 'Original', ramp: null },
   sunset: { label: 'Sunset', ramp: ['#1c0b33', '#ff5e3a', '#ffd166'] },
-  neon: { label: 'Neon Night', ramp: ['#0a1030', '#b537f2', '#4de3ff'] },
+  neon: { label: 'Neon Night', ramp: ['#070b28', '#3d4bff', '#4de3ff'] },
+  ocean: { label: 'Ocean', ramp: ['#04141f', '#17809e', '#a8ecff'] },
   gold: { label: 'Vice Gold', ramp: ['#1a1206', '#c98a1b', '#ffe9a8'] },
-  halftone: { label: 'Halftone', ramp: ['#160a24', '#ff5e3a', '#ffd166'], posterize: true },
+  halftone: { label: 'Halftone', ramp: ['#1a0508', '#d21f3c', '#ffb0a0'], posterize: true },
   noir: { label: 'Mono Noir', ramp: null, mono: true },
 };
 
@@ -62,16 +65,16 @@ export function defaultPanel(photo, grade = 'sunset') {
 export function defaultState() {
   return {
     layout: 'hero4',
-    title: 'SUNSET CHASE',
-    tagline: 'Every street is a stage',
+    title: 'PALM ROYALE',
+    tagline: 'Live fast, shine brighter',
     eyebrow: 'EST. 2026  •  LEONIDA',
     banner: 'sunset', // 'sunset' | 'navy'
     deco: { sun: true, palms: true, badge: true, tape: true, stars: true, skyline: true },
     panels: [
       { ...defaultPanel(0, 'sunset'), cy: 0.34 },
-      defaultPanel(1, 'neon'),
-      defaultPanel(2, 'gold'),
-      defaultPanel(3, 'sunset'),
+      defaultPanel(1, 'ocean'),
+      defaultPanel(2, 'noir'),
+      defaultPanel(3, 'neon'),
       { ...defaultPanel(4, 'halftone'), cx: 0.68, cy: 0.32 },
     ],
   };
@@ -145,7 +148,7 @@ function drawPanel(ctx, img, panel, x, y, w, h) {
   if (grade.posterize) {
     // Halftone dot texture: dark dots where the image is dark.
     tctx.globalAlpha = 0.22;
-    tctx.fillStyle = '#160a24';
+    tctx.fillStyle = grade.ramp ? grade.ramp[0] : '#160a24';
     const step = Math.max(5, Math.round(tw / 90));
     for (let yy = 0; yy < th; yy += step) {
       for (let xx = 0; xx < tw; xx += step) {

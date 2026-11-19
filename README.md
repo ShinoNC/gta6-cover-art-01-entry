@@ -8,8 +8,9 @@ caption into multi-panel Vice City sunset cover art, exported as PNG.
 - **One canvas renderer** for the live preview and the exported PNG — what
   you see is what you share.
 - **4 layouts**: 3×3 grid, hero + 2 stacked, 1 big + 4 small, diagonal slashes.
-- **6 grades per panel**: Original, Sunset, Neon Night, Vice Gold, Halftone,
-  Mono Noir (canvas pixel ops: duotone gradient maps, posterize, halftone dots).
+- **7 grades per panel**: Original, Sunset, Neon Night, Ocean, Vice Gold,
+  Halftone, Mono Noir (canvas pixel ops: duotone gradient maps, posterize,
+  halftone dots).
 - **Per-panel photo control**: click a panel to select it, drag to reposition,
   scroll to zoom, flip, assign any loaded photo to any panel, or fill every
   panel with one photo in one click.

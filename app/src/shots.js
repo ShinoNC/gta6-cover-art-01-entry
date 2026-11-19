@@ -8,13 +8,13 @@ const SHOTS = {
   cover1: {
     aspect: 'wide', w: 1920, h: 1080, hideEditor: true,
     state: {
-      layout: 'hero4', title: 'SUNSET CHASE', tagline: 'Every street is a stage',
+      layout: 'hero4', title: 'PALM ROYALE', tagline: 'Live fast, shine brighter',
       eyebrow: 'EST. 2026  •  LEONIDA', banner: 'sunset',
       panels: [
         { ...defaultPanel(0, 'sunset'), cy: 0.34 },
-        defaultPanel(1, 'neon'),
-        defaultPanel(2, 'gold'),
-        defaultPanel(3, 'sunset'),
+        defaultPanel(1, 'ocean'),
+        defaultPanel(2, 'noir'),
+        defaultPanel(3, 'neon'),
         { ...defaultPanel(4, 'halftone'), cx: 0.68, cy: 0.32 },
       ],
     },
@@ -22,13 +22,13 @@ const SHOTS = {
   editor: {
     aspect: 'wide', w: 1920, h: 1080, hideEditor: false,
     state: {
-      layout: 'hero4', title: 'SUNSET CHASE', tagline: 'Every street is a stage',
+      layout: 'hero4', title: 'PALM ROYALE', tagline: 'Live fast, shine brighter',
       eyebrow: 'EST. 2026  •  LEONIDA', banner: 'sunset',
       panels: [
         { ...defaultPanel(0, 'sunset'), cy: 0.34 },
-        defaultPanel(1, 'neon'),
-        defaultPanel(2, 'gold'),
-        defaultPanel(3, 'sunset'),
+        defaultPanel(1, 'ocean'),
+        defaultPanel(2, 'noir'),
+        defaultPanel(3, 'neon'),
         { ...defaultPanel(4, 'halftone'), cx: 0.68, cy: 0.32 },
       ],
     },
@@ -36,23 +36,23 @@ const SHOTS = {
   cover2: {
     aspect: 'portrait', w: 1080, h: 1350, hideEditor: true,
     state: {
-      layout: 'grid33', title: 'NEON SHORES', tagline: 'One city. No rules.',
+      layout: 'grid33', title: 'NEON TIDES', tagline: 'After dark, the city glows',
       eyebrow: 'VOL. 06  •  PALM DISTRICT', banner: 'navy',
       panels: [
-        defaultPanel(1, 'neon'), { ...defaultPanel(0, 'neon'), cy: 0.32 }, { ...defaultPanel(4, 'neon'), cx: 0.68, cy: 0.32 },
+        defaultPanel(1, 'ocean'), { ...defaultPanel(0, 'neon'), cy: 0.32 }, { ...defaultPanel(4, 'neon'), cx: 0.68, cy: 0.32 },
         { ...defaultPanel(2, 'gold'), cy: 0.6 }, { ...defaultPanel(5, 'sunset'), cy: 0.58 }, defaultPanel(3, 'neon'),
-        { ...defaultPanel(0, 'gold'), cy: 0.32 }, defaultPanel(1, 'sunset'), { ...defaultPanel(2, 'neon'), cy: 0.6 },
+        { ...defaultPanel(0, 'gold'), cy: 0.32 }, defaultPanel(1, 'sunset'), { ...defaultPanel(2, 'ocean'), cy: 0.6 },
       ],
     },
   },
   cover3: {
     aspect: 'square', w: 1080, h: 1080, hideEditor: true,
     state: {
-      layout: 'diagonal', title: 'BOULEVARD QUEEN', tagline: 'She owns the night',
+      layout: 'diagonal', title: 'GOLDEN HOUR', tagline: 'Chase the light',
       eyebrow: 'PALM DISTRICT NIGHTS', banner: 'sunset',
       panels: [
-        { ...defaultPanel(2, 'gold'), cy: 0.6 },
-        { ...defaultPanel(1, 'gold'), cx: 0.42 },
+        { ...defaultPanel(2, 'noir'), cy: 0.6 },
+        { ...defaultPanel(1, 'ocean'), cx: 0.42 },
         { ...defaultPanel(0, 'sunset'), cy: 0.34 },
       ],
     },
