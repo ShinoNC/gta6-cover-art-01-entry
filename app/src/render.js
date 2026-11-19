@@ -72,7 +72,7 @@ export function defaultState() {
       defaultPanel(1, 'neon'),
       defaultPanel(2, 'gold'),
       defaultPanel(3, 'sunset'),
-      defaultPanel(0, 'halftone'),
+      { ...defaultPanel(4, 'halftone'), cx: 0.68, cy: 0.32 },
     ],
   };
 }

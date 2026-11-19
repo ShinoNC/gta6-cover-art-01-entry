@@ -287,17 +287,21 @@ async function boot() {
       document.fonts.ready,
     ]);
   } catch (e) { /* fall back to system fonts */ }
-  const [b, p, c, m] = await Promise.all([
+  const [b, p, c, m, h, a] = await Promise.all([
     loadImage('samples/boulevard.jpg'),
     loadImage('samples/pier.jpg'),
     loadImage('samples/convertible.jpg'),
     loadImage('samples/motel.jpg'),
+    loadImage('samples/helicopter.jpg'),
+    loadImage('samples/alligator.jpg'),
   ]);
   photos = [
     { img: b, name: 'Boulevard' },
     { img: p, name: 'Pier' },
     { img: c, name: 'Convertible' },
     { img: m, name: 'Motel' },
+    { img: h, name: 'Helicopter' },
+    { img: a, name: 'Alligator' },
   ];
   buildTray();
   preview.width = ASPECTS[aspect].w;

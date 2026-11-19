@@ -20,7 +20,7 @@ caption into multi-panel Vice City sunset cover art, exported as PNG.
   "EST. 2026" starburst badge, "COLLECTORS EDITION" tape, five stars.
 - **Export**: 1080×1080, 1080×1350, 1920×1080 — one click each, or all three.
 - **"Surprise me"** randomizes layout, grade and caption.
-- 4 sample photos ship with the app (2 kit samples + 2 AI-made); your own
+- 6 sample photos ship with the app (2 kit samples + 4 AI-made); your own
   photos are read on your machine and never uploaded.
 
 ## Run it
