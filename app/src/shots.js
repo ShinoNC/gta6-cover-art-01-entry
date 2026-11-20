@@ -1,102 +1,139 @@
-// Fixed scenes for screenshots: ?shot=cover1|editor|cover2|cover3.
-// Cover shots hide the editor and draw one exported cover full-screen;
-// the editor shot shows the app with a photo loaded. window.__shotReady
-// is set once the scene is painted, so a headless screenshot can wait on it.
-import { defaultPanel } from './render.js';
+/* Sunset Vice - Cover Studio: reproducible screenshots.
+ *
+ * ?shot=<name> applies a named cover setup once the app is ready, then
+ * either leaves the editor visible (the editor shot) or shows only the
+ * cover canvas full-bleed (the cover shots). Every screenshot pixel comes
+ * from the app itself: the cover shots draw with the same drawCover the
+ * export uses, at full export size. window.__shotReady flips to true
+ * once the frame is painted, so a headless browser knows when to shoot.
+ */
+(function () {
+  'use strict';
 
-// All three covers use the unified warm wash: natural photos, one
-// golden-hour light. Roles are set per panel so the 3x3 never repeats
-// a role even where a photo repeats with a different crop.
-const SHOTS = {
-  cover1: {
-    aspect: 'wide', w: 1920, h: 1080, hideEditor: true,
-    state: {
-      layout: 'hero4', title: 'PALM ROYALE', tagline: 'Live fast, shine brighter',
-      eyebrow: 'ONE CREW  •  SIX STORIES  •  ALL GOLDEN HOUR',
-      quote: 'A love letter to the golden hour', quoteSource: 'THE COAST REVIEW',
-      banner: 'sunset',
-      panels: [
-        { ...defaultPanel(0, 'warm'), cy: 0.34 },
-        defaultPanel(1, 'warm'),
-        defaultPanel(2, 'warm'),
-        defaultPanel(3, 'warm'),
-        { ...defaultPanel(4, 'warm'), cx: 0.68, cy: 0.32 },
-      ],
+  /* The four screenshots, in dossier order. */
+  var SHOT_PRESETS = {
+    '1-cover': {
+      coverOnly: true,
+      size: 'wide',
+      layout: 'big4',
+      grade: 'warm',
+      title: 'PALM ROYALE',
+      tagline: 'Every street is a stage.',
+      eyebrow: 'VICE CITY NIGHTS',
+      quote: '"A sun-soaked joyride through neon and noise."',
+      billing: 'SUNSET VICE PICTURES  •  A COVER STUDIO PRODUCTION  •  SHOT ON LOCATION IN LEONIDA  •  EST. 2026',
+      selected: 0,
+      slots: [
+        { photo: 2, zoom: 1.00, x: 0.50, y: 0.45, tag: '' },
+        { photo: 0, zoom: 1.30, x: 0.42, y: 0.38, tag: '' },
+        { photo: 1, zoom: 1.10, x: 0.55, y: 0.50, tag: '' },
+        { photo: 4, zoom: 1.35, x: 0.60, y: 0.42, tag: '' },
+        { photo: 5, zoom: 1.15, x: 0.48, y: 0.55, tag: '' }
+      ]
     },
-  },
-  editor: {
-    aspect: 'wide', w: 1920, h: 1080, hideEditor: false,
-    state: {
-      layout: 'hero4', title: 'PALM ROYALE', tagline: 'Live fast, shine brighter',
-      eyebrow: 'ONE CREW  •  SIX STORIES  •  ALL GOLDEN HOUR',
-      quote: 'A love letter to the golden hour', quoteSource: 'THE COAST REVIEW',
-      banner: 'sunset',
-      panels: [
-        { ...defaultPanel(0, 'warm'), cy: 0.34 },
-        defaultPanel(1, 'warm'),
-        defaultPanel(2, 'warm'),
-        defaultPanel(3, 'warm'),
-        { ...defaultPanel(4, 'warm'), cx: 0.68, cy: 0.32 },
-      ],
+    'editor': {
+      coverOnly: false,
+      size: 'wide',
+      layout: 'big4',
+      grade: 'warm',
+      title: 'PALM ROYALE',
+      tagline: 'Every street is a stage.',
+      eyebrow: 'VICE CITY NIGHTS',
+      quote: '"A sun-soaked joyride through neon and noise."',
+      billing: 'SUNSET VICE PICTURES  •  A COVER STUDIO PRODUCTION  •  SHOT ON LOCATION IN LEONIDA  •  EST. 2026',
+      selected: 0,
+      slots: [
+        { photo: 2, zoom: 1.00, x: 0.50, y: 0.45, tag: '' },
+        { photo: 0, zoom: 1.30, x: 0.42, y: 0.38, tag: '' },
+        { photo: 1, zoom: 1.10, x: 0.55, y: 0.50, tag: '' },
+        { photo: 4, zoom: 1.35, x: 0.60, y: 0.42, tag: '' },
+        { photo: 5, zoom: 1.15, x: 0.48, y: 0.55, tag: '' }
+      ]
     },
-  },
-  cover2: {
-    aspect: 'portrait', w: 1080, h: 1350, hideEditor: true,
-    state: {
-      layout: 'grid33', title: 'TIDEWATER', tagline: 'After dark, the city glows',
-      eyebrow: 'NINE LIVES  •  ONE HARBOR  •  ALL TRUE',
-      quote: 'Salt air and neon in every frame', quoteSource: 'THE BAY HERALD',
-      banner: 'navy',
-      panels: [
-        { ...defaultPanel(1, 'warm'), role: 'THE ANGLER' },
-        { ...defaultPanel(0, 'warm'), cy: 0.32, role: 'THE DRIVER' },
-        { ...defaultPanel(4, 'warm'), cx: 0.68, cy: 0.32, role: 'THE CHOPPER' },
-        { ...defaultPanel(2, 'warm'), cy: 0.6, role: 'THE GETAWAY' },
-        { ...defaultPanel(5, 'warm'), cy: 0.58, role: 'THE GATOR' },
-        { ...defaultPanel(3, 'warm'), role: 'THE MOTEL' },
-        { ...defaultPanel(0, 'warm'), cy: 0.3, zoom: 1.4, role: 'THE LOOKOUT' },
-        { ...defaultPanel(1, 'warm'), cx: 0.35, zoom: 1.5, role: 'THE CAPTAIN' },
-        { ...defaultPanel(2, 'warm'), cy: 0.6, zoom: 1.4, role: 'THE RIDER' },
-      ],
+    '3-cover': {
+      coverOnly: true,
+      size: 'portrait',
+      layout: 'grid',
+      grade: 'neon',
+      title: 'TIDEWATER',
+      tagline: 'The tide always comes back.',
+      eyebrow: 'LEONIDA SHORES',
+      quote: '"Neon after dark, salt on the lens."',
+      billing: 'SUNSET VICE PICTURES  •  A COVER STUDIO PRODUCTION  •  NINE PANELS, ONE CITY  •  EST. 2026',
+      selected: 0,
+      slots: [
+        { photo: 0, zoom: 1.20, x: 0.45, y: 0.35, tag: '' },
+        { photo: 1, zoom: 1.05, x: 0.55, y: 0.50, tag: '' },
+        { photo: 2, zoom: 1.35, x: 0.38, y: 0.55, tag: '' },
+        { photo: 3, zoom: 1.00, x: 0.50, y: 0.50, tag: '' },
+        { photo: 4, zoom: 1.50, x: 0.62, y: 0.40, tag: '' },
+        { photo: 5, zoom: 1.10, x: 0.48, y: 0.58, tag: '' },
+        { photo: 0, zoom: 1.70, x: 0.60, y: 0.28, tag: '' },
+        { photo: 2, zoom: 1.25, x: 0.65, y: 0.45, tag: '' },
+        { photo: 4, zoom: 1.45, x: 0.35, y: 0.60, tag: '' }
+      ]
     },
-  },
-  cover3: {
-    aspect: 'square', w: 1080, h: 1080, hideEditor: true,
-    state: {
-      layout: 'diagonal', title: 'GOLDEN HOUR', tagline: 'Chase the light',
-      eyebrow: 'THREE SHORES  •  ONE LONG EVENING',
-      quote: 'Every frame smells like salt and gasoline', quoteSource: 'THE COAST REVIEW',
-      banner: 'sunset',
-      panels: [
-        { ...defaultPanel(2, 'warm'), cy: 0.6 },
-        { ...defaultPanel(1, 'warm'), cx: 0.42 },
-        { ...defaultPanel(0, 'warm'), cy: 0.34 },
-      ],
-    },
-  },
-};
+    '4-cover': {
+      coverOnly: true,
+      size: 'square',
+      layout: 'diagonal',
+      grade: 'gold',
+      title: 'GOLDEN HOUR',
+      tagline: 'Chase the light, keep the gold.',
+      eyebrow: 'SUNSET DISTRICT',
+      quote: '"Golden from the first frame to the last."',
+      billing: 'SUNSET VICE PICTURES  •  A COVER STUDIO PRODUCTION  •  SHOT AT GOLDEN HOUR  •  EST. 2026',
+      selected: 0,
+      slots: [
+        { photo: 4, zoom: 1.10, x: 0.50, y: 0.45, tag: '' },
+        { photo: 2, zoom: 1.25, x: 0.42, y: 0.50, tag: '' },
+        { photo: 5, zoom: 1.05, x: 0.55, y: 0.55, tag: '' },
+        { photo: 1, zoom: 1.30, x: 0.48, y: 0.42, tag: '' }
+      ]
+    }
+  };
 
-export async function runShot(name, query, env) {
-  const shot = SHOTS[name] || SHOTS.cover1;
-  const { state, redraw } = env;
-  Object.assign(state, shot.state);
-  state.deco = { sun: true, palms: true, badge: true, tape: true, stars: true, skyline: true, roles: true, quote: true, billing: true };
-  const canvas = document.getElementById('preview');
-  canvas.width = shot.w;
-  canvas.height = shot.h;
-  if (shot.hideEditor) document.body.classList.add('shot-cover');
-  // Keep the form inputs in sync so the editor shot shows the same words.
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
-  set('titleInput', state.title);
-  set('taglineInput', state.tagline);
-  set('eyebrowInput', state.eyebrow);
-  set('quoteInput', state.quote);
-  set('quoteSourceInput', state.quoteSource);
-  set('bannerSelect', state.banner);
-  document.querySelectorAll('.layout-btn').forEach((b) => {
-    b.classList.toggle('active', b.dataset.layout === state.layout);
-  });
-  redraw();
-  await document.fonts.ready;
-  requestAnimationFrame(() => requestAnimationFrame(() => { window.__shotReady = true; }));
-}
+  window.__shotReady = false;
+  window.__shotError = null;
+
+  function fitShotCanvas(canvas) {
+    /* Scale the full-size cover to the viewport, keeping its aspect. */
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var scale = Math.min(vw / canvas.width, vh / canvas.height);
+    canvas.style.width = Math.floor(canvas.width * scale) + 'px';
+    canvas.style.height = Math.floor(canvas.height * scale) + 'px';
+  }
+
+  function runShot(name) {
+    var preset = SHOT_PRESETS[name];
+    if (!preset) {
+      window.__shotError = 'unknown shot: ' + name;
+      return;
+    }
+    document.title = 'Shot — ' + name;
+    window.SunsetVice.ready.then(function () {
+      window.SunsetVice.applyPreset(preset);
+      if (preset.coverOnly) {
+        document.body.classList.add('shot-cover');
+        var stage = document.getElementById('shotStage');
+        var canvas = document.getElementById('shotCanvas');
+        stage.hidden = false;
+        window.CoverRender.drawCover(canvas, window.SunsetVice.state);
+        fitShotCanvas(canvas);
+        window.addEventListener('resize', function () { fitShotCanvas(canvas); });
+      }
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          window.__shotReady = true;
+        });
+      });
+    }).catch(function (err) {
+      window.__shotError = String(err && err.message || err);
+    });
+  }
+
+  var params = new URLSearchParams(window.location.search);
+  var shot = params.get('shot');
+  if (shot) runShot(shot);
+})();

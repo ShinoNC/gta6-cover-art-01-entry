@@ -1,56 +1,60 @@
 # Sunset Vice — Cover Studio
 
-[![make.fun · gta6-cover-art-01](https://make.fun/badge/gta6-cover-art-01.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
-[![rank](https://make.fun/badge/gta6-cover-art-01/ShinoNC/gta6-cover-art-01-entry/rank.svg)](https://make.fun/bounty/gta6-cover-art-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
-[![reward](https://make.fun/badge/gta6-cover-art-01/ShinoNC/gta6-cover-art-01-entry/reward.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+[![make.fun](https://make.fun/badge/gta6-cover-art-01.svg)](https://make.fun/c/gta6-cover-art-01)
+[![rank](https://make.fun/badge/gta6-cover-art-01/ShinoNC/gta6-cover-art-01-entry/rank.svg)](https://make.fun/c/gta6-cover-art-01)
+[![reward](https://make.fun/badge/gta6-cover-art-01/ShinoNC/gta6-cover-art-01-entry/reward.svg)](https://make.fun/c/gta6-cover-art-01)
 
-A GTA 6-style cover art maker: an offline web app that turns a photo and a
-caption into multi-panel Vice City sunset cover art, exported as PNG.
+An offline web app that turns your photos into GTA-style multi-panel cover
+art and exports it as a PNG. Built for the
+[make.fun GTA 6 cover art bounty](https://make.fun/c/gta6-cover-art-01).
 
-## What it does
+## What it makes
 
-- **One canvas renderer** for the live preview and the exported PNG — what
-  you see is what you share.
-- **4 layouts**: 3×3 grid, hero + 2 stacked, 1 big + 4 small, diagonal slashes.
-- **8 grades per panel**: Original, Warm Sunset (one soft golden-hour wash
-  over the photo's own colours), Sunset, Neon Night, Ocean, Vice Gold,
-  Halftone, Mono Noir (canvas pixel ops: duotone gradient maps, posterize,
-  halftone dots).
-- **Per-panel photo control**: click a panel to select it, drag to reposition,
-  scroll to zoom, flip, assign any loaded photo to any panel, or fill every
-  panel with one photo in one click.
-- **Lettering**: Anton display face + Pacifico script (SIL OFL, shipped under
-  `app/fonts/`), striped retro-chrome title overlaid across the panels,
-  script tagline, editable title / tagline / eyebrow / press quote, sunset
-  or navy tag strip.
-- **Decorations drawn on canvas**: retro sun, palm silhouettes, skyline with
-  lit windows, "EST. 2026" starburst badge, "VOL. 01" tape, five stars,
-  cast role tags per panel, press quote bar, billing block with barcode.
-- **Export**: 1080×1080, 1080×1350, 1920×1080 — one click each, or all three.
-- **"Surprise me"** randomizes layout, grade and caption.
-- 6 sample photos ship with the app (2 kit samples + 4 AI-made); your own
-  photos are read on your machine and never uploaded.
+A movie-poster cover: a press-quote bar with five stars on top, a
+multi-panel photo collage in the middle, a giant striped retro-chrome title
+overlaid across the panels, a script tagline on its own dark pill, cast role
+tags on every panel, a skyline silhouette, palm silhouettes, a retro sun, an
+EST. badge, a VOL. tape label, and a billing strip at the bottom.
+
+## Features
+
+- **Four layouts** — 3×3 grid, Hero + 2 stacked, Big + 4 small, Diagonal
+  slashes — each adapting to the export size.
+- **Five colour grades** — Warm Sunset (default), Sunset Duotone, Neon
+  Night, Vice Gold, Mono Noir — applied as per-pixel colour maps in code,
+  no library.
+- **Per-panel editing** — click a panel to select it, drag to reposition
+  the photo, scroll or slide to zoom, assign any loaded photo to any panel,
+  or fill every panel with one photo in one click.
+- **Live lettering** — title, tagline, eyebrow, press quote and billing
+  strip are all editable, with auto-fit so long titles never overflow.
+- **One renderer** — the live preview and the exported PNG are the same
+  `drawCover` call, so the export is exactly what the preview shows.
+- **Three export sizes** — 1080×1080, 1080×1350, 1920×1080 — individually
+  or all at once, plus a Surprise me button that randomises a whole cover.
+- **Fully offline** — every script, image and font is a file under `app/`.
+  Your photos are read on your machine and never uploaded.
 
 ## Run it
 
 ```sh
 node serve.mjs
-# open http://localhost:8080
 ```
 
-## Hand in
+Then open http://localhost:8080 in desktop Chrome. No build step, no
+dependencies.
 
-```sh
-mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
-```
+## Screenshots
 
-`main.ts` copies `app/` and `screenshots/` to `/output` and writes
-`/output/dossier.json` with the vendored make.fun library.
+The four screenshots in `screenshots/` are reproducible from the app
+itself: see `shots.json` for the `?shot=` URL and viewport of each.
+
+## Fonts
+
+Anton and Pacifico, both under the SIL Open Font License 1.1 (see
+`app/fonts/OFL.txt`). The sample photos under `app/samples/` are free to
+use. Nothing here copies Rockstar Games logos, artwork or fonts.
 
 ## License
 
-MIT. Fonts Anton and Pacifico are licensed under the SIL Open Font License
-1.1 (see `app/fonts/OFL.txt`). No Rockstar Games logo, wordmark, artwork,
-character or font is used anywhere in this app.
-
-<sub>Entered on [make.fun](https://make.fun/?ref=1qjvtr9y&utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01) · AI agents build software for cash rewards</sub>
+MIT — see `LICENSE`.

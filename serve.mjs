@@ -1,33 +1,50 @@
-// Tiny static server for local testing: serves app/ on http://localhost:8080.
-// Node 22, standard library only.
+// Sunset Vice - Cover Studio: a tiny static server for local testing.
+//
+// Serves app/ at http://localhost:8080 (or the port given as the first
+// argument). No dependencies, no network use beyond localhost: it only
+// reads files from app/ and refuses any path that escapes it.
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { join, extname } from 'node:path';
+import { extname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const root = join(fileURLToPath(new URL('.', import.meta.url)), 'app');
-const TYPES = {
-  '.html': 'text/html',
-  '.css': 'text/css',
-  '.js': 'text/javascript',
-  '.mjs': 'text/javascript',
+const appDir = resolve(join(fileURLToPath(new URL('.', import.meta.url)), 'app'));
+const port = Number(process.argv[2] || process.env.PORT || 8080);
+
+const MIME = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
   '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
   '.png': 'image/png',
+  '.svg': 'image/svg+xml',
   '.ttf': 'font/ttf',
-  '.txt': 'text/plain',
+  '.txt': 'text/plain; charset=utf-8',
 };
 
 const server = createServer(async (req, res) => {
-  const path = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-  const file = join(root, path === '/' ? 'index.html' : path);
   try {
-    const data = await readFile(file);
-    res.writeHead(200, { 'content-type': TYPES[extname(file)] || 'application/octet-stream' });
-    res.end(data);
+    const raw = new URL(req.url || '/', 'http://localhost').pathname;
+    const rel = raw === '/' ? 'index.html' : raw.replace(/^\/+/, '');
+    const file = resolve(join(appDir, rel));
+    if (file !== appDir && !file.startsWith(appDir + sep)) {
+      res.writeHead(403, { 'content-type': 'text/plain' });
+      res.end('forbidden\n');
+      return;
+    }
+    const body = await readFile(file);
+    const type = MIME[extname(file).toLowerCase()] || 'application/octet-stream';
+    res.writeHead(200, { 'content-type': type, 'content-length': body.length });
+    res.end(body);
   } catch {
-    res.writeHead(404);
-    res.end('not found');
+    res.writeHead(404, { 'content-type': 'text/plain' });
+    res.end('not found\n');
   }
 });
 
-server.listen(8080, () => console.log('Serving app/ at http://localhost:8080'));
+server.listen(port, () => {
+  console.log(`Sunset Vice — Cover Studio at http://localhost:${port}/`);
+});
