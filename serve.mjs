@@ -1,17 +1,14 @@
-// Sunset Vice - Cover Studio: a tiny static server for local testing.
-//
-// Serves app/ at http://localhost:8080 (or the port given as the first
-// argument). No dependencies, no network use beyond localhost: it only
-// reads files from app/ and refuses any path that escapes it.
+// Tiny static server for local development and screenshots.
+// Serves this repository over plain local addresses only.
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { extname, join, resolve, sep } from 'node:path';
+import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const appDir = resolve(join(fileURLToPath(new URL('.', import.meta.url)), 'app'));
-const port = Number(process.argv[2] || process.env.PORT || 8080);
+const root = resolve(join(fileURLToPath(new URL('.', import.meta.url))));
+const port = Number(process.env.PORT ?? 8901);
 
-const MIME = {
+const types = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -20,31 +17,27 @@ const MIME = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.png': 'image/png',
-  '.svg': 'image/svg+xml',
   '.ttf': 'font/ttf',
   '.txt': 'text/plain; charset=utf-8',
 };
 
-const server = createServer(async (req, res) => {
+createServer(async (req, res) => {
   try {
-    const raw = new URL(req.url || '/', 'http://localhost').pathname;
-    const rel = raw === '/' ? 'index.html' : raw.replace(/^\/+/, '');
-    const file = resolve(join(appDir, rel));
-    if (file !== appDir && !file.startsWith(appDir + sep)) {
-      res.writeHead(403, { 'content-type': 'text/plain' });
-      res.end('forbidden\n');
-      return;
-    }
-    const body = await readFile(file);
-    const type = MIME[extname(file).toLowerCase()] || 'application/octet-stream';
-    res.writeHead(200, { 'content-type': type, 'content-length': body.length });
+    const url = new URL(req.url ?? '/', 'http://127.0.0.1');
+    let path = normalize(join(root, decodeURIComponent(url.pathname)));
+    if (!path.startsWith(root)) throw Object.assign(new Error('bad path'), { code: 'ENOENT' });
+    if (path === root) path = join(root, 'app', 'index.html');
+    if (path === join(root, 'app')) path = join(root, 'app', 'index.html');
+    const body = await readFile(path);
+    res.writeHead(200, {
+      'content-type': types[extname(path).toLowerCase()] ?? 'application/octet-stream',
+      'cache-control': 'no-store',
+    });
     res.end(body);
   } catch {
     res.writeHead(404, { 'content-type': 'text/plain' });
     res.end('not found\n');
   }
-});
-
-server.listen(port, () => {
-  console.log(`Sunset Vice — Cover Studio at http://localhost:${port}/`);
+}).listen(port, '127.0.0.1', () => {
+  console.log(`Sunset Vice serving on 127.0.0.1:${port} (open /app/)`);
 });

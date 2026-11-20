@@ -1,140 +1,107 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sunset Vice — Cover Studio</title>
-<meta name="description" content="Turn your photos into GTA-style multi-panel cover art, offline, in your browser.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="topbar">
   <div class="brand">
-    <span class="brand-sun" aria-hidden="true"></span>
-    <div>
-      <h1>Sunset Vice</h1>
-      <p>Cover Studio — multi-panel poster maker</p>
-    </div>
+    <span class="sunlogo" aria-hidden="true"></span>
+    <span class="brandtext">
+      <span class="brandname">SUNSET VICE</span>
+      <span class="brandsub">Cover Studio — turn a photo into a multi-panel sunset cover</span>
+    </span>
   </div>
-  <div class="top-actions">
-    <button type="button" id="export-squareBtn" class="btn btn-ghost">PNG 1:1</button>
-    <button type="button" id="export-portraitBtn" class="btn btn-ghost">PNG 4:5</button>
-    <button type="button" id="export-wideBtn" class="btn btn-ghost">PNG 16:9</button>
-    <button type="button" id="exportAllBtn" class="btn btn-primary">Export all 3 sizes</button>
+  <div class="topactions">
+    <button id="surpriseBtn" class="btn btn-ghost" type="button">✦ Surprise me</button>
+    <button id="exportAllBtn" class="btn btn-export" type="button">Export all 3 sizes ↓</button>
   </div>
 </header>
 
 <main class="studio">
-  <!-- Left: photos + the selected panel -->
-  <aside class="panel panel-left">
-    <section class="block">
-      <h2>Photos</h2>
-      <p class="hint">Click a photo to put it in the selected panel. Your photos stay on this machine.</p>
-      <div id="photoTray" class="tray"></div>
-      <input type="file" id="uploadInput" accept="image/*" multiple hidden>
-      <button type="button" id="uploadBtn" class="btn btn-ghost btn-wide">Add your photos…</button>
-      <button type="button" id="fillAllBtn" class="btn btn-ghost btn-wide">Fill all panels with one photo</button>
+  <aside class="col col-left">
+    <section class="card">
+      <h2>1 · Photos</h2>
+      <p class="hint">Click a photo to put it in the selected panel. Upload your own — photos never leave your machine.</p>
+      <div id="tray" class="tray"></div>
+      <input id="fileInput" type="file" accept="image/*" multiple hidden>
+      <button id="addPhotoBtn" class="btn btn-dashed" type="button">+ Add your photos</button>
+      <button id="fillAllBtn" class="btn btn-fill" type="button">Fill every panel with this photo</button>
     </section>
-
-    <section class="block">
-      <h2 id="panelLabel">Panel 1 of 5</h2>
-      <p class="hint">Click a panel on the cover to select it. Drag it to move the photo, scroll to zoom.</p>
-      <label class="field">
-        <span>Photo in this panel</span>
-        <select id="panelPhotoSelect"></select>
+    <section class="card">
+      <h2>2 · Selected panel</h2>
+      <label class="field"><span>Photo</span>
+        <select id="panelPhoto"></select>
       </label>
-      <label class="field">
-        <span>Zoom — <strong id="zoomValue">1.00x</strong></span>
-        <input type="range" id="zoomSlider" min="1" max="3" step="0.05" value="1">
+      <label class="field"><span>Zoom</span>
+        <input id="panelZoom" type="range" min="100" max="300" value="100">
       </label>
-      <label class="field">
-        <span>Cast tag on this panel</span>
-        <input type="text" id="tagInput" maxlength="24" placeholder="THE DRIVER" autocomplete="off">
+      <label class="field"><span>Cast tag</span>
+        <input id="panelRole" type="text" maxlength="20" value="THE DRIVER">
       </label>
+      <button id="panelResetBtn" class="btn btn-small" type="button">Reset crop</button>
+      <p class="hint">Drag the preview to move the photo · scroll to zoom · click a panel to select it.</p>
     </section>
   </aside>
 
-  <!-- Centre: live preview -->
-  <section class="stage">
-    <div class="size-switch" id="sizeGroup" role="group" aria-label="Cover size">
-      <button type="button" data-value="wide" class="active">16:9 · 1920×1080</button>
-      <button type="button" data-value="square">1:1 · 1080×1080</button>
-      <button type="button" data-value="portrait">4:5 · 1080×1350</button>
+  <section class="col col-center">
+    <div class="sizebar">
+      <span class="sizelabel">Cover size</span>
+      <div class="pills" id="sizePills">
+        <button type="button" data-size="square">Square 1080×1080</button>
+        <button type="button" data-size="portrait">Portrait 1080×1350</button>
+        <button type="button" data-size="landscape" class="on">Landscape 1920×1080</button>
+      </div>
     </div>
-    <div class="canvas-frame">
-      <canvas id="previewCanvas" width="1920" height="1080"></canvas>
+    <div class="preview">
+      <canvas id="cover" width="1920" height="1080"></canvas>
     </div>
-    <p id="statusLine" class="status">Loading photos…</p>
+    <p class="caption">Pick a photo, a layout and a grade — then export.</p>
   </section>
 
-  <!-- Right: layout, grade, lettering, decorations -->
-  <aside class="panel panel-right">
-    <section class="block">
-      <h2>Layout</h2>
-      <div class="choice-grid" id="layoutGroup">
-        <button type="button" data-value="grid">3×3 Grid</button>
-        <button type="button" data-value="hero">Hero + 2</button>
-        <button type="button" data-value="big4" class="active">Big + 4</button>
-        <button type="button" data-value="diagonal">Diagonal</button>
+  <aside class="col col-right">
+    <section class="card">
+      <h2>3 · Layout</h2>
+      <div class="layoutgrid" id="layoutBtns">
+        <button type="button" data-layout="grid">3 × 3 Grid</button>
+        <button type="button" data-layout="hero">Hero + 2</button>
+        <button type="button" data-layout="big4" class="on">1 big + 4</button>
+        <button type="button" data-layout="diagonal">Diagonal</button>
       </div>
-    </section>
-
-    <section class="block">
-      <h2>Colour grade</h2>
-      <div class="choice-grid" id="gradeGroup">
-        <button type="button" data-value="warm" class="active"><i class="swatch sw-warm"></i>Warm Sunset</button>
-        <button type="button" data-value="duotone"><i class="swatch sw-duotone"></i>Sunset Duotone</button>
-        <button type="button" data-value="neon"><i class="swatch sw-neon"></i>Neon Night</button>
-        <button type="button" data-value="gold"><i class="swatch sw-gold"></i>Vice Gold</button>
-        <button type="button" data-value="noir"><i class="swatch sw-noir"></i>Mono Noir</button>
-      </div>
-    </section>
-
-    <section class="block">
-      <h2>Lettering</h2>
-      <label class="field">
-        <span>Title</span>
-        <input type="text" id="titleInput" maxlength="24" value="PALM ROYALE" autocomplete="off">
-      </label>
-      <label class="field">
-        <span>Tagline (script)</span>
-        <input type="text" id="taglineInput" maxlength="60" value="Every street is a stage." autocomplete="off">
-      </label>
-      <label class="field">
-        <span>Eyebrow</span>
-        <input type="text" id="eyebrowInput" maxlength="30" value="VICE CITY NIGHTS" autocomplete="off">
-      </label>
-      <label class="field">
-        <span>Press quote</span>
-        <input type="text" id="quoteInput" maxlength="70" value="&quot;A sun-soaked joyride through neon and noise.&quot;" autocomplete="off">
-      </label>
-      <label class="field">
-        <span>Billing strip</span>
-        <input type="text" id="billingInput" maxlength="120" value="SUNSET VICE PICTURES  •  A COVER STUDIO PRODUCTION  •  SHOT ON LOCATION IN LEONIDA  •  EST. 2026" autocomplete="off">
+      <label class="field"><span>One grade for every panel</span>
+        <select id="gradeSelect">
+          <option value="warm">Warm Sunset</option>
+          <option value="duotone">Sunset Duotone</option>
+          <option value="neon">Neon Night</option>
+          <option value="gold">Vice Gold</option>
+          <option value="noir">Mono Noir</option>
+        </select>
       </label>
     </section>
-
-    <section class="block">
-      <h2>Decorations</h2>
-      <div class="checks">
-        <label><input type="checkbox" id="decor-sun" checked> Retro sun</label>
-        <label><input type="checkbox" id="decor-palms" checked> Palm silhouettes</label>
-        <label><input type="checkbox" id="decor-skyline" checked> Skyline</label>
-        <label><input type="checkbox" id="decor-badge" checked> EST. badge</label>
-        <label><input type="checkbox" id="decor-tape" checked> VOL. tape label</label>
-      </div>
-      <button type="button" id="surpriseBtn" class="btn btn-accent btn-wide">Surprise me</button>
+    <section class="card">
+      <h2>4 · Lettering</h2>
+      <label class="field"><span>Title</span>
+        <input id="titleInput" type="text" maxlength="24" value="PALM ROYALE">
+      </label>
+      <label class="field"><span>Tagline</span>
+        <input id="taglineInput" type="text" maxlength="48" value="Live fast, shine brighter">
+      </label>
+      <label class="field"><span>Eyebrow</span>
+        <input id="eyebrowInput" type="text" maxlength="48" value="ONE CREW • SIX STORIES • ALL GOLDEN HOUR">
+      </label>
+      <label class="field"><span>Press quote</span>
+        <input id="quoteInput" type="text" maxlength="64" value="A love letter to the golden hour">
+      </label>
+      <label class="field"><span>Quote source</span>
+        <input id="sourceInput" type="text" maxlength="32" value="THE COAST REVIEW">
+      </label>
     </section>
   </aside>
 </main>
 
-<!-- Screenshot mode: a full-bleed cover canvas, shown only with ?shot= -->
-<div id="shotStage" hidden>
-  <canvas id="shotCanvas" width="1920" height="1080"></canvas>
-</div>
-
-<script src="src/render.js"></script>
-<script src="src/main.js"></script>
-<script src="src/shots.js"></script>
+<script type="module" src="src/main.js"></script>
 </body>
 </html>
