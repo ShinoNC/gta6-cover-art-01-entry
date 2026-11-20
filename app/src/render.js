@@ -531,15 +531,49 @@ export function drawCover(canvas, photos, state) {
   const titleSize = title
     ? fitFont(ctx, title, W * 0.96, Math.min(W * 0.115, photoH * 0.24), FONT_DISPLAY)
     : 0;
-  const titleY = tagY - skyH - titleSize * 0.86;
+  const titleY = tagY - skyH - titleSize * 1.01;
+  // Tagline geometry, shared by its scrim (drawn under the title) and the
+  // text itself (drawn over it). The tagline sits FULLY below the title's
+  // white halo: its ascender tops clear the halo's bottom edge, so no
+  // white script ever lands on the white halo. The title moved up to
+  // make room without touching the bottom-row role tags.
+  const tgSize = title ? Math.max(14, titleSize * 0.20) : 0;
+  const tgBase = titleY + titleSize * 0.72;
+  let tgW = 0;
+  if (state.tagline && tgSize) {
+    ctx.font = `${tgSize}px ${FONT_SCRIPT}`;
+    tgW = ctx.measureText(state.tagline).width;
+  }
+  if (state.tagline && tgSize) {
+    // Dark scrim pill behind the script: white Pacifico over bright photo
+    // (white shirt, bright sky) measured 1.7–3.3:1 without it. The pill
+    // sits just below the title's halo with a small gap.
+    const padX = tgSize * 0.7;
+    const padT = tgSize * 0.95;
+    const padB = tgSize * 0.55;
+    const sx = cx - tgW / 2 - padX;
+    const sy = tgBase - padT;
+    const sw = tgW + padX * 2;
+    const sh = padT + padB;
+    ctx.save();
+    ctx.fillStyle = 'rgba(10,4,18,0.82)';
+    ctx.beginPath();
+    if (typeof ctx.roundRect === 'function') ctx.roundRect(sx, sy, sw, sh, Math.min(sh / 2, tgSize * 0.5));
+    else ctx.rect(sx, sy, sw, sh);
+    ctx.fill();
+    ctx.restore();
+  }
   if (title) {
     ctx.font = `${titleSize}px ${FONT_DISPLAY}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.lineJoin = 'round';
-    // Drop shadow pass, then dark outline, then the striped chrome fill.
-    ctx.fillStyle = 'rgba(20,8,31,0.85)';
-    ctx.fillText(title, cx + titleSize * 0.03, titleY + titleSize * 0.05);
+    // Double outline: the white outer ring reads against dark photos, the
+    // dark inner ring against bright ones. The chrome fill alone fails at
+    // both ends — pale top over bright sky, purple bottom over dark water.
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = Math.max(2, titleSize * 0.20);
+    ctx.strokeText(title, cx, titleY);
     ctx.strokeStyle = '#14081f';
     ctx.lineWidth = Math.max(2, titleSize * 0.09);
     ctx.strokeText(title, cx, titleY);
@@ -547,18 +581,17 @@ export function drawCover(canvas, photos, state) {
     ctx.fillText(title, cx, titleY);
   }
   if (state.tagline) {
-    // The script overlaps the title's lower edge, poster-style, and stays
-    // clear of the bottom-row role tags.
-    const tgSize = Math.max(14, titleSize * 0.23);
+    // The script sits on its dark scrim just below the title, clear of
+    // the halo above and the bottom-row role tags below.
     ctx.font = `${tgSize}px ${FONT_SCRIPT}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
     ctx.lineJoin = 'round';
     ctx.strokeStyle = 'rgba(20,8,31,0.9)';
-    ctx.lineWidth = Math.max(2, tgSize * 0.14);
-    ctx.strokeText(state.tagline, cx, titleY + titleSize * 0.46);
+    ctx.lineWidth = Math.max(2, tgSize * 0.18);
+    ctx.strokeText(state.tagline, cx, tgBase);
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(state.tagline, cx, titleY + titleSize * 0.46);
+    ctx.fillText(state.tagline, cx, tgBase);
   }
 
   // Tape label (top-left of the photo area) + seal (bottom-right).
@@ -603,6 +636,22 @@ export function drawCover(canvas, photos, state) {
       ebSize2 -= 1;
       ctx.font = `700 ${ebSize2}px "Arial Narrow", sans-serif`;
       try { ctx.letterSpacing = `${Math.max(2, ebSize2 * 0.22)}px`; } catch (e) { /* older canvas */ }
+    }
+    if (state.banner === 'sunset') {
+      // Dark scrim pill behind the gold text: gold on the orange-pink
+      // gradient measured 2.3:1. The navy banner needs none (gold on
+      // near-black already passes).
+      const ebW = ctx.measureText(state.eyebrow.toUpperCase()).width;
+      const padX = ebSize2 * 0.9;
+      const eby = by + tagH * 0.54;
+      const eh = ebSize2 * 1.7;
+      ctx.save();
+      ctx.fillStyle = 'rgba(10,4,18,0.82)';
+      ctx.beginPath();
+      if (typeof ctx.roundRect === 'function') ctx.roundRect(cx - ebW / 2 - padX, eby - eh / 2, ebW + padX * 2, eh, eh / 2);
+      else ctx.rect(cx - ebW / 2 - padX, eby - eh / 2, ebW + padX * 2, eh);
+      ctx.fill();
+      ctx.restore();
     }
     ctx.fillText(state.eyebrow.toUpperCase(), cx, by + tagH * 0.54);
     try { ctx.letterSpacing = '0px'; } catch (e) { /* older canvas */ }
