@@ -1,43 +1,43 @@
-// Tiny static server for local development and screenshots.
-// Serves this repository over plain local addresses only.
+// Tiny static server for trying the app locally: serves app/ at the root
+// so the page loads exactly as the grader and the finalist review serve it.
+// Run `node serve.mjs` and open the printed address in desktop Chrome.
+// The port can be overridden: `node serve.mjs 8000`.
+
 import { createServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
+import { createReadStream, existsSync, statSync } from 'node:fs';
 import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const root = resolve(join(fileURLToPath(new URL('.', import.meta.url))));
-const port = Number(process.env.PORT ?? 8901);
+const APP_DIR = resolve(fileURLToPath(new URL('./app/', import.meta.url)));
+const PORT = Number(process.argv[2] || 8080);
 
-const types = {
+const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.mjs': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
-  '.png': 'image/png',
   '.ttf': 'font/ttf',
   '.txt': 'text/plain; charset=utf-8',
 };
 
-createServer(async (req, res) => {
-  try {
-    const url = new URL(req.url ?? '/', 'http://127.0.0.1');
-    let path = normalize(join(root, decodeURIComponent(url.pathname)));
-    if (!path.startsWith(root)) throw Object.assign(new Error('bad path'), { code: 'ENOENT' });
-    if (path === root) path = join(root, 'app', 'index.html');
-    if (path === join(root, 'app')) path = join(root, 'app', 'index.html');
-    const body = await readFile(path);
-    res.writeHead(200, {
-      'content-type': types[extname(path).toLowerCase()] ?? 'application/octet-stream',
-      'cache-control': 'no-store',
-    });
-    res.end(body);
-  } catch {
-    res.writeHead(404, { 'content-type': 'text/plain' });
+const server = createServer((req, res) => {
+  const url = new URL(req.url ?? '/', 'http://127.0.0.1');
+  let rel = normalize(url.pathname).replace(/^\/+/, '');
+  if (rel === '') rel = 'index.html';
+  const file = join(APP_DIR, rel);
+  if (!file.startsWith(APP_DIR) || !existsSync(file) || !statSync(file).isFile()) {
+    res.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' });
     res.end('not found\n');
+    return;
   }
-}).listen(port, '127.0.0.1', () => {
-  console.log(`Sunset Vice serving on 127.0.0.1:${port} (open /app/)`);
+  res.writeHead(200, { 'content-type': TYPES[extname(file).toLowerCase()] ?? 'application/octet-stream' });
+  createReadStream(file).pipe(res);
+});
+
+server.listen(PORT, '127.0.0.1', () => {
+  console.log(`Sunset Vice is serving app/ at http://127.0.0.1:${PORT}/`);
 });

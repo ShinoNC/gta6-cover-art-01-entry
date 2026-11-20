@@ -1,91 +1,54 @@
-// Fixed scenes for screenshots: ?shot=cover1 / editor / cover3 / cover4.
-// Each preset is a full cover state. main.js applies it, paints once, then
-// sets window.__shotReady so the screenshot tool knows the frame is done.
+// Fixed scenes for screenshots: each ?shot= value stages one of the four
+// screenshots and sets window.__shotReady once the cover is painted.
+//   ?shot=cover1  Palm Royale, landscape, the 1 big + 4 cover alone
+//   ?shot=editor  the editor with the Palm Royale cover loaded
+//   ?shot=cover3  Tidewater, portrait, the 3x3 grid cover alone
+//   ?shot=cover4  Golden Hour, square, the diagonal cover alone
+// Cover shots draw the cover full-frame at the viewport size, using the
+// same drawCover the editor and the export use.
 
-const P = (photo, role, extra = {}) => ({ photo, role, zoom: 1, ...extra });
+import { drawCover } from './render.js';
 
-export const SHOTS = {
-  cover1: {
-    mode: 'cover',
-    layout: 'big4',
-    size: 'landscape',
-    grade: 'warm',
-    band: 'sunset',
-    title: 'PALM ROYALE',
-    tagline: 'Live fast, shine brighter',
-    eyebrow: 'ONE CREW • SIX STORIES • ALL GOLDEN HOUR',
-    quote: 'A love letter to the golden hour',
-    source: 'THE COAST REVIEW',
-    panels: [
-      P('boulevard', 'THE DRIVER'),
-      P('pier', 'THE ANGLER'),
-      P('convertible', 'THE GETAWAY'),
-      P('motel', 'THE MOTEL'),
-      P('helicopter', 'THE CHOPPER'),
-    ],
-  },
-  editor: {
-    mode: 'editor',
-    layout: 'big4',
-    size: 'landscape',
-    grade: 'warm',
-    band: 'sunset',
-    title: 'PALM ROYALE',
-    tagline: 'Live fast, shine brighter',
-    eyebrow: 'ONE CREW • SIX STORIES • ALL GOLDEN HOUR',
-    quote: 'A love letter to the golden hour',
-    source: 'THE COAST REVIEW',
-    panels: [
-      P('boulevard', 'THE DRIVER'),
-      P('pier', 'THE ANGLER'),
-      P('convertible', 'THE GETAWAY'),
-      P('motel', 'THE MOTEL'),
-      P('helicopter', 'THE CHOPPER'),
-    ],
-  },
-  cover3: {
-    mode: 'cover',
-    layout: 'grid',
-    size: 'portrait',
-    grade: 'warm',
-    band: 'dark',
-    title: 'TIDEWATER',
-    tagline: 'After dark, the city glows',
-    eyebrow: 'NINE LIVES • ONE HARBOR • ALL TRUE',
-    quote: 'Salt air and neon in every frame',
-    source: 'THE BAY HERALD',
-    panels: [
-      P('pier', 'THE ANGLER'),
-      P('boulevard', 'THE DRIVER'),
-      P('helicopter', 'THE CHOPPER'),
-      P('convertible', 'THE GETAWAY'),
-      P('alligator', 'THE GATOR'),
-      P('motel', 'THE MOTEL'),
-      P('boulevard', 'THE LOOKOUT', { zoom: 1.1 }),
-      P('pier', 'THE CAPTAIN', { zoom: 1.7, fy: 0.22 }),
-      P('convertible', 'THE RIDER', { zoom: 1.15 }),
-    ],
-  },
-  cover4: {
-    mode: 'cover',
-    layout: 'diagonal',
-    size: 'square',
-    grade: 'warm',
-    band: 'sunset',
-    title: 'GOLDEN HOUR',
-    tagline: 'Chase the light',
-    eyebrow: 'THREE SHORES • ONE LONG EVENING',
-    quote: 'Every frame smells like salt and gasoline',
-    source: 'THE COAST REVIEW',
-    panels: [
-      P('convertible', 'THE GETAWAY'),
-      P('pier', 'THE ANGLER', { zoom: 1.7, fy: 0.22 }),
-      P('boulevard', 'THE DRIVER', { zoom: 1.1, fy: 0.35 }),
-    ],
-  },
-};
+function paintWhenReady(paint) {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        paint();
+        requestAnimationFrame(() => {
+          window.__shotReady = true;
+          resolve();
+        });
+      });
+    });
+  });
+}
 
-export function shotFromQuery() {
-  const name = new URLSearchParams(window.location.search).get('shot');
-  return name && SHOTS[name] ? name : null;
+export async function applyShot(query, app) {
+  const shot = query.get('shot');
+  const { canvas, images } = app;
+  const ctx = canvas.getContext('2d');
+
+  if (shot === 'editor') {
+    app.setPreset('palm');
+    app.setSize('landscape');
+    app.syncLettering();
+    await paintWhenReady(() => app.renderPreview());
+    return;
+  }
+
+  const presetName = shot === 'cover3' ? 'tidewater' : shot === 'cover4' ? 'golden' : 'palm';
+  app.setPreset(presetName);
+  document.body.classList.add('shot-cover');
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  canvas.width = w;
+  canvas.height = h;
+  canvas.style.width = `${w}px`;
+  canvas.style.height = `${h}px`;
+  await paintWhenReady(() => {
+    const boxes = [];
+    drawCover(ctx, app.state, w, h, images, boxes);
+    window.__coverBoxes = boxes;
+    window.__coverSize = { w, h };
+  });
 }

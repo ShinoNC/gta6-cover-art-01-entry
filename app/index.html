@@ -4,99 +4,82 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sunset Vice — Cover Studio</title>
+<link rel="icon" href="data:,">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="topbar">
+<header class="app-header">
   <div class="brand">
-    <span class="sunlogo" aria-hidden="true"></span>
-    <span class="brandtext">
-      <span class="brandname">SUNSET VICE</span>
-      <span class="brandsub">Cover Studio — turn a photo into a multi-panel sunset cover</span>
-    </span>
+    <span class="brand-sun" aria-hidden="true"></span>
+    <div>
+      <h1 data-contrast="light">SUNSET VICE</h1>
+      <p class="subtitle" data-contrast="light">Cover Studio — turn a photo into a multi-panel sunset cover</p>
+    </div>
   </div>
-  <div class="topactions">
-    <button id="surpriseBtn" class="btn btn-ghost" type="button">✦ Surprise me</button>
-    <button id="exportAllBtn" class="btn btn-export" type="button">Export all 3 sizes ↓</button>
+  <div class="header-actions">
+    <button type="button" id="surpriseBtn" class="btn-outline" data-contrast="light">✦ Surprise me</button>
+    <button type="button" id="exportBtn" class="btn-export" data-contrast="light">Export all 3 sizes ↓</button>
   </div>
 </header>
 
 <main class="studio">
-  <aside class="col col-left">
-    <section class="card">
-      <h2>1 · Photos</h2>
-      <p class="hint">Click a photo to put it in the selected panel. Upload your own — photos never leave your machine.</p>
-      <div id="tray" class="tray"></div>
-      <input id="fileInput" type="file" accept="image/*" multiple hidden>
-      <button id="addPhotoBtn" class="btn btn-dashed" type="button">+ Add your photos</button>
-      <button id="fillAllBtn" class="btn btn-fill" type="button">Fill every panel with this photo</button>
+  <aside class="panel panel-left">
+    <section class="section">
+      <h2 data-contrast="gold">1 · PHOTOS</h2>
+      <p class="helper" data-contrast="light">Click a photo to put it in the selected panel. Upload your own — photos never leave your machine.</p>
+      <div id="photoTray" class="tray"></div>
+      <input type="file" id="photoInput" accept="image/*" multiple hidden>
+      <button type="button" id="addPhotosBtn" class="btn-dashed" data-contrast="gold">+ Add your photos</button>
+      <button type="button" id="fillAllBtn" class="btn-solid" data-contrast="light">Fill every panel with this photo</button>
     </section>
-    <section class="card">
-      <h2>2 · Selected panel</h2>
-      <label class="field"><span>Photo</span>
-        <select id="panelPhoto"></select>
+    <section class="section">
+      <h2 data-contrast="gold">2 · SELECTED PANEL</h2>
+      <p id="selectedName" class="selected-name" data-contrast="light">Panel 1 of 5 — Boulevard</p>
+      <label class="field-label" data-contrast="light">Cast tag
+        <input type="text" id="panelTag" maxlength="24" value="THE DRIVER">
       </label>
-      <label class="field"><span>Zoom</span>
-        <input id="panelZoom" type="range" min="100" max="300" value="100">
+      <label class="field-label" data-contrast="light">Zoom <span id="zoomValue" class="zoom-value">1.00×</span>
+        <input type="range" id="panelZoom" min="1" max="3" step="0.05" value="1">
       </label>
-      <label class="field"><span>Cast tag</span>
-        <input id="panelRole" type="text" maxlength="20" value="THE DRIVER">
-      </label>
-      <button id="panelResetBtn" class="btn btn-small" type="button">Reset crop</button>
-      <p class="hint">Drag the preview to move the photo · scroll to zoom · click a panel to select it.</p>
+      <p class="helper" data-contrast="light">Drag the photo on the preview to move it. Scroll over it to zoom.</p>
     </section>
   </aside>
 
-  <section class="col col-center">
-    <div class="sizebar">
-      <span class="sizelabel">Cover size</span>
-      <div class="pills" id="sizePills">
-        <button type="button" data-size="square">Square 1080×1080</button>
-        <button type="button" data-size="portrait">Portrait 1080×1350</button>
-        <button type="button" data-size="landscape" class="on">Landscape 1920×1080</button>
-      </div>
+  <section class="center">
+    <div class="size-row">
+      <span class="size-label" data-contrast="light">Cover size</span>
+      <div id="sizePills" class="size-pills"></div>
     </div>
-    <div class="preview">
-      <canvas id="cover" width="1920" height="1080"></canvas>
+    <div class="preview-wrap">
+      <canvas id="coverCanvas" width="960" height="540"></canvas>
     </div>
-    <p class="caption">Pick a photo, a layout and a grade — then export.</p>
+    <p class="caption" data-contrast="gold">Pick a photo, a layout and a grade — then export.</p>
   </section>
 
-  <aside class="col col-right">
-    <section class="card">
-      <h2>3 · Layout</h2>
-      <div class="layoutgrid" id="layoutBtns">
-        <button type="button" data-layout="grid">3 × 3 Grid</button>
-        <button type="button" data-layout="hero">Hero + 2</button>
-        <button type="button" data-layout="big4" class="on">1 big + 4</button>
-        <button type="button" data-layout="diagonal">Diagonal</button>
-      </div>
-      <label class="field"><span>One grade for every panel</span>
-        <select id="gradeSelect">
-          <option value="warm">Warm Sunset</option>
-          <option value="duotone">Sunset Duotone</option>
-          <option value="neon">Neon Night</option>
-          <option value="gold">Vice Gold</option>
-          <option value="noir">Mono Noir</option>
-        </select>
+  <aside class="panel panel-right">
+    <section class="section">
+      <h2 data-contrast="gold">3 · LAYOUT</h2>
+      <div id="layoutGrid" class="layout-grid"></div>
+      <label class="field-label" data-contrast="light">One grade for every panel
+        <select id="gradeSelect"></select>
       </label>
     </section>
-    <section class="card">
-      <h2>4 · Lettering</h2>
-      <label class="field"><span>Title</span>
-        <input id="titleInput" type="text" maxlength="24" value="PALM ROYALE">
+    <section class="section">
+      <h2 data-contrast="gold">4 · LETTERING</h2>
+      <label class="field-label" data-contrast="light">Title
+        <input type="text" id="titleInput" maxlength="24" value="PALM ROYALE">
       </label>
-      <label class="field"><span>Tagline</span>
-        <input id="taglineInput" type="text" maxlength="48" value="Live fast, shine brighter">
+      <label class="field-label" data-contrast="light">Tagline
+        <input type="text" id="taglineInput" maxlength="48" value="Live fast, shine brighter">
       </label>
-      <label class="field"><span>Eyebrow</span>
-        <input id="eyebrowInput" type="text" maxlength="48" value="ONE CREW • SIX STORIES • ALL GOLDEN HOUR">
+      <label class="field-label" data-contrast="light">Eyebrow
+        <input type="text" id="eyebrowInput" maxlength="64" value="ONE CREW • SIX STORIES • ALL GOLDEN HOUR">
       </label>
-      <label class="field"><span>Press quote</span>
-        <input id="quoteInput" type="text" maxlength="64" value="A love letter to the golden hour">
+      <label class="field-label" data-contrast="light">Press quote
+        <input type="text" id="quoteInput" maxlength="64" value="A love letter to the golden hour">
       </label>
-      <label class="field"><span>Quote source</span>
-        <input id="sourceInput" type="text" maxlength="32" value="THE COAST REVIEW">
+      <label class="field-label" data-contrast="light">Quote source
+        <input type="text" id="quoteSourceInput" maxlength="32" value="THE COAST REVIEW">
       </label>
     </section>
   </aside>
