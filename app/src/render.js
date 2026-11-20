@@ -1,4 +1,5 @@
 // render.js — one canvas renderer for the Sunset Vice cover.
+// Layouts: 3x3 Grid, Hero + 2, 1 big + 4, Diagonal — all drawn by this file.
 //
 // drawCover draws the live preview AND the exported PNG at full size, so a
 // screenshot of the app is exactly what the app makes. Everything is drawn
