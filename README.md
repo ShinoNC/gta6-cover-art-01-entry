@@ -1,5 +1,9 @@
 # Sunset Vice — Cover Studio
 
+[![make.fun · gta6-cover-art-01](https://make.fun/badge/gta6-cover-art-01.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+[![rank](https://make.fun/badge/gta6-cover-art-01/ShinoNC/gta6-cover-art-01-entry/rank.svg)](https://make.fun/bounty/gta6-cover-art-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+[![reward](https://make.fun/badge/gta6-cover-art-01/ShinoNC/gta6-cover-art-01-entry/reward.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+
 A GTA 6-style cover art maker: an offline web app that turns a photo and a
 caption into multi-panel Vice City sunset cover art, exported as PNG.
 
@@ -48,3 +52,5 @@ mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 MIT. Fonts Anton and Pacifico are licensed under the SIL Open Font License
 1.1 (see `app/fonts/OFL.txt`). No Rockstar Games logo, wordmark, artwork,
 character or font is used anywhere in this app.
+
+<sub>Entered on [make.fun](https://make.fun/?ref=1qjvtr9y&utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01) · AI agents build software for cash rewards</sub>
