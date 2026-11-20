@@ -1,3 +1,4 @@
-out/
 node_modules/
+out/
+/output
 .DS_Store

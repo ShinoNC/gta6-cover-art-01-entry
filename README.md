@@ -3,63 +3,71 @@
 [![rank](https://make.fun/badge/gta6-cover-art-01/ShinoNC/gta6-cover-art-01-entry/rank.svg)](https://make.fun/bounty/gta6-cover-art-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
 [![reward](https://make.fun/badge/gta6-cover-art-01/ShinoNC/gta6-cover-art-01-entry/reward.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
 
-An offline web app that turns a person's own photos and a caption into
-GTA 6-style multi-panel cover art, exported as a PNG to share. Built for
-the make.fun gta6-cover-art-01 bounty.
+Turn a photo into multi-panel sunset cover art, in the browser, fully
+offline. Pick photos, a layout and a grade, edit the lettering live, and
+export the cover as a PNG in three sizes. Entry for the make.fun
+`gta6-cover-art-01` bounty.
+
+## Run it
+
+```sh
+node serve.mjs 8000
+```
+
+Then open `http://127.0.0.1:8000/app/index.html`. No build step, no
+dependencies, no network: every script, style, font and image the app
+loads is a file under `app/`. Uploaded photos are read on your machine
+and never leave it.
 
 ## What it does
 
-- **Multi-panel covers** — four layouts (3 × 3 Grid, Hero + 2, 1 big + 4,
-  Diagonal) around one bold caption, with a press quote bar, cast tags, a
-  VOL. 01 tape label, an EST. 2026 seal, a skyline, a sunset tag band and a
-  billing strip.
-- **Any photo** — load photos from your machine (they never leave it),
-  assign any photo to any panel, drag to reposition, scroll or slide to
-  zoom, and fill every panel with one photo in one click. Six sample photos
-  ship with the app.
-- **Lettering** — striped retro-chrome title (Anton), script tagline
-  (Pacifico) on its own dark pill, editable title, tagline, tag strip,
-  press quote and quote source.
-- **Grades** — Warm Sunset (the default), Neon Night, Vice Gold, Mono Noir
-  and Natural, applied to every panel.
-- **Fast export** — one click downloads the cover in all three post sizes:
-  1080 × 1080, 1080 × 1350 and 1920 × 1080. The live preview and the export
-  share one canvas renderer (`app/src/render.js`, `drawCover`), so the
-  cover on screen is the cover you download.
-- **Offline** — static files under `app/`, no build step, no network
-  request. Every font and sample photo is a local file.
-
-## Try it
-
-```sh
-node serve.mjs
-```
-
-Then open the printed address in desktop Chrome.
+- **One canvas renderer** (`app/src/render.js`) draws both the live
+  preview and the exported PNG at full size, so the preview is the
+  export.
+- **4 layouts**: 3×3 Grid, Hero + 2, 1 big + 4, Diagonal. The layout
+  adapts to the export size.
+- **One grade for every panel**: Warm Sunset by default (natural colours
+  with a golden wash), plus Golden Hour, Neon Night and Mono Noir.
+- **Per-panel photo control**: click a panel to select it, drag to
+  reposition its photo, scroll or use the slider to zoom, assign any
+  loaded photo to any panel, or fill every panel with one photo.
+  Six sample photos ship with the app; upload your own.
+- **Lettering, editable live**: title, tagline, eyebrow (the tag strip),
+  press quote and quote source, plus a cast tag per panel.
+- **Canvas-drawn decorations**: retro sun icon, skyline silhouette,
+  VOL. 01 tape label, EST. 2026 gold seal, 5 stars, barcode.
+- **Export PNG** at 1080×1080, 1080×1350 and 1920×1080, one at a time
+  or all three in one click. "Surprise me" randomizes a cover.
 
 ## Screenshots
 
-`shots.json` lists the four screenshots under `screenshots/`, each taken
-from the app itself through a `?shot=` scene (`cover1`, `editor`, `cover3`,
-`cover4`): the Palm Royale landscape cover, the editor with a photo loaded,
-the Tidewater portrait cover and the Golden Hour square cover. No
-screenshot is edited or composited outside the app.
+The four screenshots in `screenshots/` are taken from the app itself
+through `?shot=` query params (see `shots.json` and `app/src/shots.js`),
+never composited or edited outside the app:
 
-## Hand in
+1. `1-cover.jpg` — PALM ROYALE, the landscape cover (1 big + 4)
+2. `2-editor.jpg` — the editor with a cover loaded
+3. `3-cover.jpg` — TIDEWATER, the portrait cover (3×3 grid)
+4. `4-cover.jpg` — GOLDEN HOUR, the square cover (Diagonal)
+
+## Build the dossier
 
 ```sh
-mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+MAKEFUN_OUTPUT_DIR=out node main.ts
 ```
 
-`main.ts` copies `app/` and `screenshots/` to the output directory and
-writes `dossier.json` with the kit's `buildDossier` library.
+`main.ts` (Node 22, standard library only) copies `app/` and
+`screenshots/` to the output directory and writes `dossier.json` there
+with the scorer's own `buildDossier` from `vendor/makefun-app.ts`.
 
 ## Originality
 
-Everything here is original: invented titles, sample photos made with an
-image model, and two SIL Open Font License fonts (Anton and Pacifico, under
-`app/fonts/` with their license text). No Rockstar Games logo, wordmark,
-artwork, character or font is used anywhere.
+All lettering, decorations and layout are original work drawn in code.
+The app ships no Rockstar Games logo, wordmark, artwork, character or
+font. Fonts are Anton (display) and Pacifico (script), both under the
+SIL Open Font License 1.1 (`app/fonts/OFL.txt`). The sample photos are
+the kit's two free photos plus four made for this entry; none is a real
+person's photo or GTA artwork.
 
 ## License
 
