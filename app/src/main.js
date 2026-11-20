@@ -6,14 +6,14 @@ import { drawCover, panelRects, LAYOUTS, GRADES, GRADE_IDS, LAYOUT_IDS, defaultS
 import { runShot } from './shots.js';
 
 const TITLES = [
-  ['SUNSET CHASE', 'Every street is a stage'],
-  ['NEON SHORES', 'One city. No rules.'],
-  ['BOULEVARD QUEEN', 'She owns the night'],
-  ['VICE NIGHTS', 'Neon never sleeps'],
-  ['LEONIDA HEAT', 'Welcome to Leonida'],
-  ['SUNSET HEIST', 'Take it all before dawn'],
   ['PALM ROYALE', 'Live fast, shine brighter'],
   ['GOLDEN HOUR', 'Chase the light'],
+  ['TIDEWATER', 'After dark, the city glows'],
+  ['VELVET PALMS', 'Soft light, sharp edges'],
+  ['SALT AIR SOCIAL', 'Every hour is golden'],
+  ['MIDNIGHT MARINA', 'The tide never sleeps'],
+  ['CORAL SKYLINE', 'Where the city meets the sea'],
+  ['LAST LIGHT CLUB', 'Members only, sunset only'],
 ];
 
 const ASPECTS = {
@@ -219,6 +219,8 @@ $('globalGrade').addEventListener('change', (e) => {
 $('titleInput').addEventListener('input', (e) => { state.title = e.target.value; redraw(); });
 $('taglineInput').addEventListener('input', (e) => { state.tagline = e.target.value; redraw(); });
 $('eyebrowInput').addEventListener('input', (e) => { state.eyebrow = e.target.value; redraw(); });
+$('quoteInput').addEventListener('input', (e) => { state.quote = e.target.value; redraw(); });
+$('quoteSourceInput').addEventListener('input', (e) => { state.quoteSource = e.target.value; redraw(); });
 $('bannerSelect').addEventListener('change', (e) => { state.banner = e.target.value; redraw(); });
 
 document.querySelectorAll('[data-deco]').forEach((c) => {

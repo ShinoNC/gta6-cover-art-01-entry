@@ -8,17 +8,20 @@ caption into multi-panel Vice City sunset cover art, exported as PNG.
 - **One canvas renderer** for the live preview and the exported PNG — what
   you see is what you share.
 - **4 layouts**: 3×3 grid, hero + 2 stacked, 1 big + 4 small, diagonal slashes.
-- **7 grades per panel**: Original, Sunset, Neon Night, Ocean, Vice Gold,
+- **8 grades per panel**: Original, Warm Sunset (one soft golden-hour wash
+  over the photo's own colours), Sunset, Neon Night, Ocean, Vice Gold,
   Halftone, Mono Noir (canvas pixel ops: duotone gradient maps, posterize,
   halftone dots).
 - **Per-panel photo control**: click a panel to select it, drag to reposition,
   scroll to zoom, flip, assign any loaded photo to any panel, or fill every
   panel with one photo in one click.
 - **Lettering**: Anton display face + Pacifico script (SIL OFL, shipped under
-  `app/fonts/`), gradient title with dark outline, editable title / tagline /
-  eyebrow, sunset or navy banner.
-- **Decorations drawn on canvas**: retro sun, palm silhouettes, skyline,
-  "EST. 2026" starburst badge, "COLLECTORS EDITION" tape, five stars.
+  `app/fonts/`), striped retro-chrome title overlaid across the panels,
+  script tagline, editable title / tagline / eyebrow / press quote, sunset
+  or navy tag strip.
+- **Decorations drawn on canvas**: retro sun, palm silhouettes, skyline with
+  lit windows, "EST. 2026" starburst badge, "VOL. 01" tape, five stars,
+  cast role tags per panel, press quote bar, billing block with barcode.
 - **Export**: 1080×1080, 1080×1350, 1920×1080 — one click each, or all three.
 - **"Surprise me"** randomizes layout, grade and caption.
 - 6 sample photos ship with the app (2 kit samples + 4 AI-made); your own
